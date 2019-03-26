@@ -18,6 +18,15 @@
             <regionSite @region="regionSearch"></regionSite>
             </Col>
             <Col :xs="24" :lg="10" :style="{marginBottom: '10px'}">
+            <div class="search-title" style="letter-spacing: 0">炮弹发射类型</div>
+            <Select v-model="param.launchType" clearable style="width:135px;float:left;" @on-change="selectLanuch">
+              <Option value="1">移动</Option>
+              <Option value="0">固定</Option>
+            </Select>
+            </Col>
+          </Row>
+          <Row type="flex" justify="start">
+            <Col :xs="24" :lg="12" :style="{marginBottom: '10px'}">
             <div  class="search-title">关键字</div>
             <Input  v-model="param.condition" icon="ios-close-circle" @on-click="backKeyword" ref="search" placeholder="终端编号/炮架名称搜索" style="width: 270px; float:left;" @on-change="keywordChange()">
             </Input>
@@ -48,7 +57,7 @@
       cancel-text=""
       @on-ok="cancelAdd"
       @on-cancel="cancelAdd" width="700">
-      <Form :model="updateModal" :label-width="110" ref="updateModal" :rules="ruleValidate">
+      <Form :model="updateModal" :label-width="140" ref="updateModal" :rules="ruleValidate">
         <Row type="flex" justify="center">
           <Col span="24">
           <FormItem label="站名" prop="stationId">
@@ -58,15 +67,14 @@
           <FormItem label="终端编号" prop="terminalId">
             <Input  v-model="updateModal.terminalId"  style="width: 200px; float: left"  @on-change="terminalVal(updateModal.terminalId)" placeholder="终端编号"></Input>
             <span class="notice" v-if="terNotice">终端编号不能为空</span>
-            <span class="notice" v-if="terminalNotice">请输入0 ~ 2147483647的整数</span>
+            <span class="notice" v-if="terminalNotice">请输入0~2147483647的整数</span>
             <!--<span class="notice" v-if="terminalsNotice">终端编号不能超过10位</span>-->
             <br>
           </FormItem>
           <FormItem label="炮架编号" prop="launcherId">
             <Input  v-model="updateModal.launcherId"  style="width: 200px; float: left"  @on-change="launchVal(updateModal.launcherId)" placeholder="炮架编号"></Input>
             <span class="notice" v-if="lanNotice">炮架编号不能为空</span>
-            <span class="notice" v-if="launchsNotice">请输入0 ~ 32767的整数</span>
-            <!--<span class="notice" v-if="launchsNotice">炮架编号不能超过10位</span>-->
+            <span class="notice" v-if="launchsNotice">请输入0~32767的整数</span>
             <br>
           </FormItem>
           <FormItem label="炮架名称" prop="name">
@@ -78,13 +86,19 @@
           </FormItem>
           <FormItem label="发射架类型" prop="model">
             <Select v-model="updateModal.model" style="width:200px">
-            <Option v-for="item in modelList" :value="item.name" :key="item.name">{{ item.name }}</Option>
+              <Option v-for="item in modelList" :value="item.name" :key="item.name">{{ item.name }}</Option>
             </Select>
           </FormItem>
+          <FormItem label="炮弹发射类型" prop="launchType">
+            <RadioGroup v-model="updateModal.launchType">
+              <Radio label="1">移动</Radio>
+              <Radio label="0">固定</Radio>
+            </RadioGroup>
+          </FormItem>
           <!--<FormItem label="监控板信息" prop="version">-->
-            <!--<Select v-model="updateModal.version" style="width:200px">-->
-              <!--<Option v-for="item in versionList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-            <!--</Select>-->
+          <!--<Select v-model="updateModal.version" style="width:200px">-->
+          <!--<Option v-for="item in versionList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+          <!--</Select>-->
           <!--</FormItem>-->
           <FormItem>
             <Col span="24" push="8">
@@ -151,6 +165,9 @@
           <FormItem label="发射架类型">
             {{editModal.model}}
           </FormItem>
+          <FormItem label="炮弹发射类型">
+            {{editModal.launchType === 1 ? '移动' : '固定'}}
+          </FormItem>
           <FormItem>
             <Col span="24" push="3">
             <Button class="btn-list" @click="okEdit">保存</Button>
@@ -211,7 +228,8 @@
           launcherId: '',
           model: '',
           version: '',
-          name: ''
+          name: '',
+          launchType: '1'
         },
         blindModal: {
           stationId: '',
@@ -256,6 +274,15 @@
             key: 'model',
             align: 'center',
             width: 120
+          },
+          {
+            title: '炮弹发射类型',
+            key: 'launchType',
+            align: 'center',
+            width: 120,
+            render: (h,params) => {
+              return h('div', params.row.launchType === 0 ? '固定' : '移动')
+            }
           },
           // {
           //   title: '监控板信息',
@@ -345,6 +372,9 @@
           ],
           name: [
             {required: true, message: '炮架名称不能为空', trigger: 'blur'}
+          ],
+          launchType: [
+            {required: true, message: '炮弹发射类型不能为空', trigger: 'blur'}
           ]
         }
       }
@@ -357,7 +387,8 @@
           terminalId: '',
           launcherId: '',
           model: '',
-          version: ''
+          version: '',
+          launchType: '1'
         }
         this.addUser = true
         this.terNotice = false
@@ -393,13 +424,13 @@
           this.$Message.error('终端编号为空！')
           return false
         } else if (this.terminalNotice) {
-          this.$Message.error('终端编号请输入0 ~ 2147483647的整数！')
+          this.$Message.error('终端编号请输入0~2147483647的整数！')
           return false
         } else if (this.updateModal.launcherId === '' || this.updateModal.launcherId === undefined || this.launchNotice) {
           this.$Message.error('炮架编号为空！')
           return false
         } else if (this.launchsNotice) {
-          this.$Message.error('炮架编号请输入0 ~ 32767的整数！')
+          this.$Message.error('炮架编号请输入0~32767的整数！')
           return false
         } else if (this.updateModal.name === '' || this.updateModal.name === undefined || this.lanNaNotice) {
           this.$Message.error('炮架名称为空！')
@@ -438,7 +469,8 @@
                 launcherId: '',
                 model: '',
                 version: '',
-                name: ''
+                name: '',
+                launchType: '1'
               }
               this.$Message.success('炮架注册成功！')
               this.getTableDatas(this.param)
@@ -498,7 +530,6 @@
           })
         }
       },
-      // 终端编号
       terminalVal (string) {
         var validate = /^\+?[1-9][0-9]*$/
         if (string !== '' && string !== undefined) {
@@ -571,6 +602,7 @@
         this.editModal.launcherId = row.launcherId
         this.editModal.model = row.model
         this.editModal.name = row.name
+        this.editModal.launchType = row.launchType
       },
       okEdit () {
         if (this.editModal.name === '' || this.editModal.name === undefined || this.lanNaNotice) {
@@ -664,6 +696,14 @@
       },
       keywordChange () {
         this.param.condition = this.param.condition.trim()
+        this.param.pageSize = 10
+        this.param.pageNum = 1
+        this.page = 1
+        var thi = this
+        thi.getTableDatas(thi.param)
+      },
+      selectLanuch (change) {
+        this.param.lanuchType = change
         this.param.pageSize = 10
         this.param.pageNum = 1
         this.page = 1
@@ -779,7 +819,6 @@
     font-family:MicrosoftYaHei;
     text-align: center;
     color:#666;
-    min-width: 1366px;
   }
   .body-content {
     background: #fff;

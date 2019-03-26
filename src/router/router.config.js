@@ -23,6 +23,15 @@ const router = [
         component: resolve => require(['../view/user/index.vue'], resolve)
       },
       {
+        path: '/test',
+        name: 'test',
+        meta: {
+          requireAuth: true,
+          permission: []
+        },
+        component: resolve => require(['../view/user/test.vue'], resolve)
+      },
+      {
         path: '/shells',
         name: 'shells',
         meta: {

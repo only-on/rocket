@@ -14,22 +14,22 @@
           </Row>
           <Row type="flex" justify="start" style="margin-top: 10px">
             <Col :xs="24" :lg="14" :style="{marginBottom: '10px'}">
-              <div class="search-title" style="letter-spacing: 0"> 炮架名称&nbsp;</div>
-              <regionGun @region="regionChange"></regionGun>
+            <div class="search-title" style="letter-spacing: 0"> 炮架名称&nbsp;</div>
+            <regionGun @region="regionChange"></regionGun>
             </Col>
             <Col :xs="24"  :lg="10" :style="{marginBottom: '10px'}">
-              <div  class="search-title" style="letter-spacing: 0;margin-right: 15px">作业时间</div>
-              <Select  style="width:180px;float:left" placeholder="作业时间" @on-change="selectTime"  clearable v-model="workTime" :label-in-value="true">
-                <Option v-for='(items, index) in timeList' :value='items' :key="index">{{items}}</Option>
-              </Select>
+            <div  class="search-title" style="letter-spacing: 0;margin-right: 15px">作业时间</div>
+            <Select  style="width:180px;float:left" placeholder="作业时间" @on-change="selectTime"  clearable v-model="workTime" :label-in-value="true">
+              <Option v-for='(items, index) in timeList' :value='items' :key="index">{{items}}</Option>
+            </Select>
             </Col>
           </Row>
           <Row type="flex" justify="start">
             <Col span="24">
-              <div  class="search-title" style="letter-spacing: 0;margin-right: 15px">作业批次</div>
-              <Select  style="width:405px;float:left" placeholder="作业批次" @on-change="selectBatch"  clearable v-model="batch" :label-in-value="true">
-                <Option v-for='(items, index) in keys' :value='items.id' :key="index">{{items.name}}</Option>
-              </Select>
+            <div  class="search-title" style="letter-spacing: 0;margin-right: 15px">作业批次</div>
+            <Select  style="width:405px;float:left" placeholder="作业批次" @on-change="selectBatch"  clearable v-model="batch" :label-in-value="true">
+              <Option v-for='(items, index) in keys' :value='items.id' :key="index">{{items.name}}</Option>
+            </Select>
             </Col>
           </Row>
           </Col>
@@ -44,28 +44,25 @@
         </div>
         <Timeline style="margin-top: 80px;margin-left: 100px">
           <TimelineItem color="#eff0f4" style="margin-top: 10px;" v-for="(items,indexs) in list" :key="indexs">
-          <div style="margin-left: 40px">
-            <div class="divPop" style="float:left;width: 70%;padding: 10px">
-              <div style="font-size: 16px;color: red;text-align: left;">{{items.time}}</div>
-              <div style="font-size: 15px;text-align: left;">
+            <div style="margin-left: 40px">
+              <div class="divPop" style="float:left;width: 70%;padding: 10px">
+                <div style="font-size: 16px;color: red;text-align: left;">{{items.time}}</div>
+                <div style="font-size: 15px;text-align: left;">
                 <span :style="{'color':items.command ==='自检'? '#09AD2C':items.command ==='调炮'? '#ff9900':items.command ==='装订'? '#7660d4' :items.command ==='点火'?'#00B9D3':'#09AD2C'}">
                 {{items.command}}
                 </span><br>
-                <span>
-                高低: {{items.heightId}} &nbsp;&nbsp;
-                方位: {{items.directionId}} &nbsp;&nbsp;
-                <span v-if="items.command === '点火'"> 当前发射弹数: {{items.currentCount}} &nbsp;&nbsp;</span>
-                <span v-if="items.command === '点火'"> {{rocketText}}: {{items.totalCount}} &nbsp;&nbsp;</span>
-                <span v-if="items.command === '点火' && items.third === 1"> 故障数: {{items.brokenCount}} &nbsp;&nbsp;</span>
-                <span v-if="items.command === '点火' && items.third === 1"> 操作员编号: {{items.operatorId}} &nbsp;&nbsp;</span>
-                <span v-if="items.command === '装订'"> 抛撒时间: {{items.showTime}}</span> &nbsp;&nbsp;
-                <span v-if="items.command === '装订'"> 开伞时间 : {{items.openTime}}</span> &nbsp;&nbsp;
-                <span v-if="items.command === '装订'"> 预留时间: {{items.reserveTime}}</span> &nbsp;&nbsp;
-                </span>
+                  <span v-if="items.command !== '装订'">高低: {{items.heightId}} &nbsp;&nbsp;方位: {{items.directionId}} &nbsp;&nbsp;</span>
+                  <span v-if="items.command === '点火'"> 当前发射弹数: {{items.currentCount}} &nbsp;&nbsp;</span>
+                  <span v-if="items.command === '点火'"> {{rocketText}}: {{items.totalCount}} &nbsp;&nbsp;</span>
+                  <span v-if="items.command === '点火' && items.third === 1"> 故障数: {{items.brokenCount}} &nbsp;&nbsp;</span>
+                  <span v-if="items.command === '点火' && items.third === 1"> 操作员编号: {{items.operatorId}} &nbsp;&nbsp;</span>
+                  <span v-if="items.command === '装订'"> 抛撒时间: {{items.showTime}}</span> &nbsp;&nbsp;
+                  <span v-if="items.command === '装订'"> 开伞时间 : {{items.openTIme}}</span> &nbsp;&nbsp;
+                  <span v-if="items.command === '装订'"> 预留时间: {{items.reserveTime}}</span> &nbsp;&nbsp;
+                </div>
               </div>
+              <div class="divPopBefore"></div>
             </div>
-            <div class="divPopBefore"></div>
-          </div>
           </TimelineItem>
         </Timeline>
       </Row>
@@ -144,9 +141,9 @@
         ],
         dataTable:[
           {
-          name: '100',
-          time: '2018-06-12 14:52:07',
-          action: 0
+            name: '100',
+            time: '2018-06-12 14:52:07',
+            action: 0
           },
           {
             name: '100',
@@ -286,18 +283,18 @@
               }
             }
             Launch(par).then((res) => {
-                if (res.data.R) {
-                  this.$Message.info('更改成功,请重新选择作业批次!')
-                  this.checkText()
-                  this.keys = []
-                  this.getTableDatas(this.param)
-                  this.batch = ''
-                  // console.log(this.batch)
-                  // this.batch = this.selectValue
-                  // console.log(this.selectValue)
-                } else {
-                  this.$Message.error(res.data.ERR_MSG)
-                }
+              if (res.data.R) {
+                this.$Message.info('更改成功,请重新选择作业批次!')
+                this.checkText()
+                this.keys = []
+                this.getTableDatas(this.param)
+                this.batch = ''
+                // console.log(this.batch)
+                // this.batch = this.selectValue
+                // console.log(this.selectValue)
+              } else {
+                this.$Message.error(res.data.ERR_MSG)
+              }
             })
           }
         });
@@ -398,7 +395,7 @@
         this.getTableDatas(this.param)
       }
     }
-    }
+  }
 </script>
 
 <style scoped>

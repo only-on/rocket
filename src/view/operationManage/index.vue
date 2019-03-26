@@ -493,7 +493,6 @@
     font-family:MicrosoftYaHei;
     text-align: center;
     color:#666;
-    min-width: 1366px;
   }
   .body-content {
     background: #fff;

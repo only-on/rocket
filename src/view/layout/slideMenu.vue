@@ -15,7 +15,7 @@
             <MenuItem :name="item.actionUrl" v-if="item.children.length === 0" v-show="!isCollapsed">
               <Icon :type="item.icon"></Icon>
                        <span>{{item.title}}</span>
-                     </MenuItem>
+              </MenuItem>
               <Submenu :name="item.actionUrl" v-if="item.children.length !== 0" v-show="!isCollapsed">
                 <template slot="title">
                   <Icon :type="item.icon"></Icon>
@@ -28,6 +28,10 @@
                 <!--<span>{{index}}</span>-->
               </MenuItem>
            </Row>
+
+            <MenuItem name="test">
+              <span>测试</span>
+            </MenuItem>
           </Menu>
         </Sider>
 
